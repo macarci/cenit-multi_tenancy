@@ -33,35 +33,36 @@ module Mongo
   end
 
   module Operation
+    module Commands
+      class CollectionsInfo
 
-    class CollectionsInfo
+        private
 
-      private
+        alias_method :mongo_selector, :selector
 
-      alias_method :mongo_selector, :selector
-
-      def selector
-        selector = mongo_selector
-        if (filter = spec[:selector]) && (filter = filter[:filter])
-          selector = { '$and' => [selector, filter] }
+        def selector
+          selector = mongo_selector
+          if (filter = spec[:selector]) && (filter = filter[:filter])
+            selector = { '$and' => [selector, filter] }
+          end
+          selector
         end
-        selector
       end
-    end
 
-    class ListCollections
+      class ListCollections
 
-      private
+        private
 
-      def selector
-        selector = spec[SELECTOR] || {}
-        selector[:listCollections] = 1
-        filter = { name: { '$not' => /system\.|\$/ } }
-        if selector.key?(:filter)
-          filter = { '$and' => [selector[:filter], filter] }
+        def selector
+          selector = spec[SELECTOR] || {}
+          selector[:listCollections] = 1
+          filter = { name: { '$not' => /system\.|\$/ } }
+          if selector.key?(:filter)
+            filter = { '$and' => [selector[:filter], filter] }
+          end
+          selector[:filter] = filter
+          selector
         end
-        selector[:filter] = filter
-        selector
       end
     end
   end
