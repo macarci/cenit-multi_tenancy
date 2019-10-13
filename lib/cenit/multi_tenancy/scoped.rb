@@ -54,7 +54,9 @@ module Cenit
             end
           else
             options = options.merge(collection: Cenit::MultiTenancy.tenant_model.tenant_collection_name(mongoid_root_class, tenant: tenant)) if tenant_option
-            super
+	    # TODO need pass a block, to avoid error, the implmentation of with method changed 
+	    # https://github.com/mongodb/mongoid/commit/25a375d47054304cf3d7537c7d3f21c591b8fb73
+            super(options) {}
           end
         end
       end
